@@ -1,0 +1,35 @@
+Na última empresa em que trabalhei, todos os sistemas utilizados registravam as informações
+em bancos de dados SQL Server. Em muitos casos, em bancos de dados independentes e em servidores
+separados.
+
+O volume de relatórios e dashboards gerados e consumidos pela alta adminstração da empresa, bem como
+por toda as áreas da empresa sempre foi muito grande e, para algumas dessas áreas, o alto volume de
+informações geradas em alguns relatórios sempre acabava gerando eventuais problemas de performance.
+
+Na empresa existe uma célula de Business Intelligence, responsável por centralizar as informações
+em um servidor único, consolidando os dados em um único Data warehouse ou em data marts para cada
+segmento de negócio. Isso possibilitou minimizar os problemas de perfomance existentes e garantir
+um acesso mais centralizado às informações.
+
+Porém, o volume de informação gerado em cada relatório ainda continua sendo muito grande, o que
+ainda ocasiona eventuais problemas de performance, por exemplo, devido à geração simultânea de um
+mesmo relatório por pessoas ou áreas distintas.
+
+Outro problema, é com relação à janela de extração e processamento dos dados de produção, que em
+alguns casos, inviabiliza a vizualização de informações mais atualizadas. Nesses casos, os dados
+lançados no sistema num dado momento, só ficam disponíveis nos relatórios e dashboards após a
+próxima janela de prcessamento.
+
+Uma solução para o problema de performance e disponibilidade dos dados, seria levantar as áreas,
+relatórios, dashboards e respectivas informações que mais se envolvem nos problemas citados e,
+para esses casos, criar um processo que exportaria e consolidaria essas informações em um datalake
+e alimentaria um banco de dados NoSQL para geração dos relatórios e dashboards.
+
+Esse processo seria anterior ou paralelo ao processo de ETL, ou seja, as informações continuariam
+sendo enviadas para a base de dados de histórico, porém, com datas de corte bem definidas a fim
+de evitar os problemas citados anteriormente. As informações mais consumidas ficariam disponíveis
+no banco NoSQL e, as informações menos consumidas, ficariam registradas na base de histórico.
+
+Os relatórios e dashboards seriam adaptados para buscar as informações anteriores à data de corte
+do banco de dados de histórico e, as informações posteriores à data de corte, do banco de dados
+NoSQL.

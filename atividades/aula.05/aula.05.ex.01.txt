@@ -1,0 +1,4 @@
+Partindo do princípio de que as informações são baseadas em leituras de sensores e de que não são modificadas ou excluídas
+a não ser que ocorra uma nova leitura, os dados gerados pelos sensores seriam registrados em um datalake e armazenados em
+um banco de dados NoSQL para geração de relatórios e dashboards. Com uma data de corte pré-estabelecida, essas informações
+seriam consolidadas em um banco de dados relacional de histórico (um Data Warehouse ou Data Mart).

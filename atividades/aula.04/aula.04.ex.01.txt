@@ -1,0 +1,187 @@
+#==========================================================================
+# Faça uma pesquisa simples na coleção Vocabulary pelo termo “feliz”
+# no campo text
+#==========================================================================
+
+:: [ Número de documentos que foi escaneado ] :: 291214
+:: [ Tempo que levou para fazer a consulta  ] :: 174
+
+	> use nosqlclass
+	switched to db nosqlclass
+
+	> db.vocabulary.find({"text":"feliz"}).explain({"executionStats":1})
+	{
+			"queryPlanner" : {
+					"plannerVersion" : 1,
+					"namespace" : "nosqlclass.vocabulary",
+					"indexFilterSet" : false,
+					"parsedQuery" : {
+							"text" : {
+									"$eq" : "feliz"
+							}
+					},
+					"winningPlan" : {
+							"stage" : "COLLSCAN",
+							"filter" : {
+									"text" : {
+											"$eq" : "feliz"
+									}
+							},
+							"direction" : "forward"
+					},
+					"rejectedPlans" : [ ]
+			},
+			"executionStats" : {
+					"executionSuccess" : true,
+					"nReturned" : 1,
+					"executionTimeMillis" : 174,
+					"totalKeysExamined" : 0,
+					"totalDocsExamined" : 291214,
+					"executionStages" : {
+							"stage" : "COLLSCAN",
+							"filter" : {
+									"text" : {
+											"$eq" : "feliz"
+									}
+							},
+							"nReturned" : 1,
+							"executionTimeMillisEstimate" : 160,
+							"works" : 291216,
+							"advanced" : 1,
+							"needTime" : 291214,
+							"needYield" : 0,
+							"saveState" : 2275,
+							"restoreState" : 2275,
+							"isEOF" : 1,
+							"invalidates" : 0,
+							"direction" : "forward",
+							"docsExamined" : 291214
+					},
+					"allPlansExecution" : [ ]
+			},
+			"serverInfo" : {
+					"host" : "vmPUCMinas",
+					"port" : 27017,
+					"version" : "3.4.0",
+					"gitVersion" : "f4240c60f005be757399042dc12f6addbc3170c1"
+			},
+			"ok" : 1
+	}
+
+:: [ Criação do índice simples ]
+
+	> db.vocabulary.createIndex({"text":1})
+	{
+			"createdCollectionAutomatically" : false,
+			"numIndexesBefore" : 1,
+			"numIndexesAfter" : 2,
+			"ok" : 1
+	}
+
+:: [ Número de documentos que foi escaneado ] :: 1
+:: [ Tempo que levou para fazer a consulta  ] :: 46
+	
+	> db.vocabulary.find({"text":"feliz"}).explain({"executionStats":1})
+	{
+			"queryPlanner" : {
+					"plannerVersion" : 1,
+					"namespace" : "nosqlclass.vocabulary",
+					"indexFilterSet" : false,
+					"parsedQuery" : {
+							"text" : {
+									"$eq" : "feliz"
+							}
+					},
+					"winningPlan" : {
+							"stage" : "FETCH",
+							"inputStage" : {
+									"stage" : "IXSCAN",
+									"keyPattern" : {
+											"text" : 1
+									},
+									"indexName" : "text_1",
+									"isMultiKey" : false,
+									"multiKeyPaths" : {
+											"text" : [ ]
+									},
+									"isUnique" : false,
+									"isSparse" : false,
+									"isPartial" : false,
+									"indexVersion" : 2,
+									"direction" : "forward",
+									"indexBounds" : {
+											"text" : [
+													"[\"feliz\", \"feliz\"]"
+											]
+									}
+							}
+					},
+					"rejectedPlans" : [ ]
+			},
+			"executionStats" : {
+					"executionSuccess" : true,
+					"nReturned" : 1,
+					"executionTimeMillis" : 46,
+					"totalKeysExamined" : 1,
+					"totalDocsExamined" : 1,
+					"executionStages" : {
+							"stage" : "FETCH",
+							"nReturned" : 1,
+							"executionTimeMillisEstimate" : 20,
+							"works" : 2,
+							"advanced" : 1,
+							"needTime" : 0,
+							"needYield" : 0,
+							"saveState" : 1,
+							"restoreState" : 1,
+							"isEOF" : 1,
+							"invalidates" : 0,
+							"docsExamined" : 1,
+							"alreadyHasObj" : 0,
+							"inputStage" : {
+									"stage" : "IXSCAN",
+									"nReturned" : 1,
+									"executionTimeMillisEstimate" : 20,
+									"works" : 2,
+									"advanced" : 1,
+									"needTime" : 0,
+									"needYield" : 0,
+									"saveState" : 1,
+									"restoreState" : 1,
+									"isEOF" : 1,
+									"invalidates" : 0,
+									"keyPattern" : {
+											"text" : 1
+									},
+									"indexName" : "text_1",
+									"isMultiKey" : false,
+									"multiKeyPaths" : {
+											"text" : [ ]
+									},
+									"isUnique" : false,
+									"isSparse" : false,
+									"isPartial" : false,
+									"indexVersion" : 2,
+									"direction" : "forward",
+									"indexBounds" : {
+											"text" : [
+													"[\"feliz\", \"feliz\"]"
+											]
+									},
+									"keysExamined" : 1,
+									"seeks" : 1,
+									"dupsTested" : 0,
+									"dupsDropped" : 0,
+									"seenInvalidated" : 0
+							}
+					},
+					"allPlansExecution" : [ ]
+			},
+			"serverInfo" : {
+					"host" : "vmPUCMinas",
+					"port" : 27017,
+					"version" : "3.4.0",
+					"gitVersion" : "f4240c60f005be757399042dc12f6addbc3170c1"
+			},
+			"ok" : 1
+	}

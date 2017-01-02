@@ -1,0 +1,127 @@
+> use Aula2
+switched to db Aula2
+
+[Insert]
+
+> db.Alunos.insert({"Nome":"Cristiano", "Aniversario":ISODate("2016-10-15T00:00:
+00.000Z"), "Disciplinas":["NoSQL", "Python"], "Notas":[75, 82]})
+WriteResult({ "nInserted" : 1 })
+> db.Alunos.insert({"Nome":"Luciano", "Aniversario":ISODate("2016-02-10T00:00:00
+.000Z"), "Disciplinas":["Matemática", "História"], "Notas":[83, 81]})
+WriteResult({ "nInserted" : 1 })
+> db.Alunos.insert({"Nome":"Solange", "Aniversario":ISODate("2016-07-25T00:00:00
+.000Z"), "Disciplinas":["Artes", "Literatura"], "Notas":[73, 89]})
+WriteResult({ "nInserted" : 1 })
+> db.Alunos.insert({"Nome":"Cristina", "Aniversario":ISODate("2016-12-10T00:00:0
+0.000Z"), "Disciplinas":["Física", "Ciências"], "Notas":[84, 89]})
+WriteResult({ "nInserted" : 1 })
+> db.Alunos.insert({"Nome":"Ruth", "Aniversario":ISODate("2016-01-12T00:00:00.00
+0Z"), "Disciplinas":["Artes", "Literatura"], "Notas":[95, 89]})
+WriteResult({ "nInserted" : 1 })
+> db.Alunos.insert({"Nome":"Télio", "Aniversario":ISODate("2016-04-03T00:00:00.0
+00Z"), "Disciplinas":["Física", "Matemática"], "Notas":[95, 89]})
+WriteResult({ "nInserted" : 1 })
+> db.Alunos.insert({"Nome":"Miquéias", "Aniversario":ISODate("2016-10-15T00:00:0
+0.000Z"), "Disciplinas":["Matemática", "Python"], "Notas":[95, 78]})
+WriteResult({ "nInserted" : 1 })
+
+[Find]
+
+> db.Alunos.find()
+{ "_id" : ObjectId("5848a9b4fdae0cff35686676"), "Nome" : "Cristiano", "Aniversar
+io" : ISODate("2016-10-15T00:00:00Z"), "Disciplinas" : [ "NoSQL", "Python" ], "N
+otas" : [ 75, 82 ] }
+{ "_id" : ObjectId("5848aa05fdae0cff35686677"), "Nome" : "Luciano", "Aniversario
+" : ISODate("2016-02-10T00:00:00Z"), "Disciplinas" : [ "Matemática", "História"
+], "Notas" : [ 83, 81 ] }
+{ "_id" : ObjectId("5848aa3efdae0cff35686678"), "Nome" : "Solange", "Aniversario
+" : ISODate("2016-07-25T00:00:00Z"), "Disciplinas" : [ "Artes", "Literatura" ],
+"Notas" : [ 73, 89 ] }
+{ "_id" : ObjectId("5848aa7afdae0cff35686679"), "Nome" : "Cristina", "Aniversari
+o" : ISODate("2016-12-10T00:00:00Z"), "Disciplinas" : [ "Física", "Ciências" ],
+"Notas" : [ 84, 89 ] }
+{ "_id" : ObjectId("5848aaa5fdae0cff3568667a"), "Nome" : "Ruth", "Aniversario" :
+ ISODate("2016-01-12T00:00:00Z"), "Disciplinas" : [ "Artes", "Literatura" ], "No
+tas" : [ 95, 89 ] }
+{ "_id" : ObjectId("5848aacffdae0cff3568667b"), "Nome" : "Télio", "Aniversario"
+: ISODate("2016-04-03T00:00:00Z"), "Disciplinas" : [ "Física", "Matemática" ], "
+Notas" : [ 95, 89 ] }
+{ "_id" : ObjectId("5848ab0afdae0cff3568667c"), "Nome" : "Miquéias", "Aniversari
+o" : ISODate("2016-10-15T00:00:00Z"), "Disciplinas" : [ "Matemática", "Python" ]
+, "Notas" : [ 95, 78 ] }
+
+[Find]: Menor Aniversário
+
+> db.Alunos.find().sort({Aniversario: 1}).limit(1)
+{ "_id" : ObjectId("5848aaa5fdae0cff3568667a"), "Nome" : "Ruth", "Aniversario" :
+ ISODate("2016-01-12T00:00:00Z"), "Disciplinas" : [ "Artes", "Literatura" ], "No
+tas" : [ 95, 89 ] }
+
+[Find]: Maior Aniversário
+
+> db.Alunos.find().sort({Aniversario: -1}).limit(1)
+{ "_id" : ObjectId("5848aa7afdae0cff35686679"), "Nome" : "Cristina", "Aniversari
+o" : ISODate("2016-12-10T00:00:00Z"), "Disciplinas" : [ "Física", "Ciências" ],
+"Notas" : [ 84, 89 ] }
+
+[Update]
+
+> db.Alunos.update({"Nome":"Cristiano"}, { $set:{"Notas":[5, 82]} })
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+> db.Alunos.find({"Nome":"Cristiano"})
+{ "_id" : ObjectId("5848a9b4fdae0cff35686676"), "Nome" : "Cristiano", "Aniversar
+io" : ISODate("2016-10-15T00:00:00Z"), "Disciplinas" : [ "NoSQL", "Python" ], "N
+otas" : [ 5, 82 ] }
+
+
+[Dúvida]: Como eu atualizaria somente a primeira posição do array "Notas"?
+
+
+> db.Alunos.update({"Nome":"Cristiano"}, {$set:{"Nome":"Cristiano Bento"}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+> db.Alunos.find()
+{ "_id" : ObjectId("5848a9b4fdae0cff35686676"), "Nome" : "Cristiano Bento", "Ani
+versario" : ISODate("2016-10-15T00:00:00Z"), "Disciplinas" : [ "NoSQL", "Python"
+ ], "Notas" : [ 5, 82 ] }
+{ "_id" : ObjectId("5848aa3efdae0cff35686678"), "Nome" : "Solange", "Aniversario
+" : ISODate("2016-07-25T00:00:00Z"), "Disciplinas" : [ "Artes", "Literatura" ],
+"Notas" : [ 73, 89 ] }
+{ "_id" : ObjectId("5848aa7afdae0cff35686679"), "Nome" : "Cristina", "Aniversari
+o" : ISODate("2016-12-10T00:00:00Z"), "Disciplinas" : [ "Física", "Ciências" ],
+"Notas" : [ 84, 89 ] }
+{ "_id" : ObjectId("5848aaa5fdae0cff3568667a"), "Nome" : "Ruth", "Aniversario" :
+ ISODate("2016-01-12T00:00:00Z"), "Disciplinas" : [ "Artes", "Literatura" ], "No
+tas" : [ 95, 89 ] }
+{ "_id" : ObjectId("5848aacffdae0cff3568667b"), "Nome" : "Télio", "Aniversario"
+: ISODate("2016-04-03T00:00:00Z"), "Disciplinas" : [ "Física", "Matemática" ], "
+Notas" : [ 95, 89 ] }
+{ "_id" : ObjectId("5848ab0afdae0cff3568667c"), "Nome" : "Miquéias", "Aniversari
+o" : ISODate("2016-10-15T00:00:00Z"), "Disciplinas" : [ "Matemática", "Python" ]
+, "Notas" : [ 95, 78 ] }
+
+[Remove]
+
+> db.Alunos.remove({"Nome":"Luciano"})
+WriteResult({ "nRemoved" : 1 })
+
+> db.Alunos.find()
+{ "_id" : ObjectId("5848a9b4fdae0cff35686676"), "Nome" : "Cristiano", "Aniversar
+io" : ISODate("2016-10-15T00:00:00Z"), "Disciplinas" : [ "NoSQL", "Python" ], "N
+otas" : [ 5, 82 ] }
+{ "_id" : ObjectId("5848aa3efdae0cff35686678"), "Nome" : "Solange", "Aniversario
+" : ISODate("2016-07-25T00:00:00Z"), "Disciplinas" : [ "Artes", "Literatura" ],
+"Notas" : [ 73, 89 ] }
+{ "_id" : ObjectId("5848aa7afdae0cff35686679"), "Nome" : "Cristina", "Aniversari
+o" : ISODate("2016-12-10T00:00:00Z"), "Disciplinas" : [ "Física", "Ciências" ],
+"Notas" : [ 84, 89 ] }
+{ "_id" : ObjectId("5848aaa5fdae0cff3568667a"), "Nome" : "Ruth", "Aniversario" :
+ ISODate("2016-01-12T00:00:00Z"), "Disciplinas" : [ "Artes", "Literatura" ], "No
+tas" : [ 95, 89 ] }
+{ "_id" : ObjectId("5848aacffdae0cff3568667b"), "Nome" : "Télio", "Aniversario"
+: ISODate("2016-04-03T00:00:00Z"), "Disciplinas" : [ "Física", "Matemática" ], "
+Notas" : [ 95, 89 ] }
+{ "_id" : ObjectId("5848ab0afdae0cff3568667c"), "Nome" : "Miquéias", "Aniversari
+o" : ISODate("2016-10-15T00:00:00Z"), "Disciplinas" : [ "Matemática", "Python" ]
+, "Notas" : [ 95, 78 ] }

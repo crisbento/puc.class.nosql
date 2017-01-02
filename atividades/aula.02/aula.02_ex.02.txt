@@ -1,0 +1,162 @@
+[Import]:[cmd]
+
+C:\>C:\MongoDB\Server\3.4\bin\mongoimport -d nosqlclass -c vocabulary C:\puc.cla
+ss.nosql\entregas\aula.02\vocabulary.json
+
+2016-12-29T19:09:50.534-0200    connected to: localhost
+2016-12-29T19:09:53.528-0200    [########################] nosqlclass.vocabulary
+        22.1MB/9.77MB (226.9%)
+2016-12-29T19:09:56.529-0200    [########################] nosqlclass.vocabulary
+        22.1MB/19.8MB (112.0%)
+2016-12-29T19:09:57.223-0200    [########################] nosqlclass.vocabulary
+        22.1MB/22.1MB (100.0%)
+2016-12-29T19:09:57.223-0200    imported 291214 documents
+
+#==============================================================================
+# Listar as 10 palavras com maior valor no campo total
+#==============================================================================
+
+import pymongo
+
+if __name__ == '__main__':
+    client = pymongo.MongoClient('localhost')
+    db = client.nosqlclass
+
+    cursor = db.vocabulary.find().sort('total', -1).limit(10)
+
+    for document in cursor:
+        print('_id: ', document['_id'], 'total: ', document['total'])
+
+#==============================================================================
+# Resultados
+#==============================================================================
+
+_id:  rt total:  202375
+_id:  e total:  189464
+_id:  no total:  164138
+_id:  de total:  160927
+_id:  casa total:  140661
+_id:  a total:  127984
+_id:  que total:  106225
+_id:  o total:  96294
+_id:  em total:  90408
+_id:  has total:  86989
+
+#==============================================================================
+# Encontrar todas as palavras que são usuários do twitter, hashtags, urls
+# e adicionar um campo informando o tipo de palavra
+#==============================================================================
+
+import pymongo
+
+if __name__ == '__main__':
+    client = pymongo.MongoClient('localhost')
+    db = client.nosqlclass
+
+    cursor = db.vocabulary.find()
+
+    for document in cursor:
+        if (str(document['_id'])[0:1] == '@'):
+            db.vocabulary.update({ '_id' : document['_id'] }, { '$set' : { 'word' : 'twitter' } })
+        else:
+            if (str(document['_id'])[0:1] == '#'):
+                db.vocabulary.update({ '_id' : document['_id'] }, { '$set' : { 'word' : 'hashtag' } })
+            else:
+                if (str(document['_id'])[0:4] == 'http'):
+                    db.vocabulary.update({ '_id' : document['_id'] }, { '$set' : { 'word' : 'url' } })
+                else:
+                    db.vocabulary.update({ '_id' : document['_id'] }, { '$set' : { 'word' : 'generic' } })
+
+#==============================================================================
+# Resultados
+#==============================================================================
+
+    cursor = db.vocabulary.find({'word' : 'twitter'}).sort("total", -1).limit(10)
+
+    for document in cursor:
+        print(document)
+
+{'text': '@youtube', 'total': 5242, 'label': 4.0, 'type': 3, 'word': 'twitter', '_id': '@youtube'}
+{'text': '@humdaora:', 'total': 4094, 'label': 3.0, 'type': 5, 'word': 'twitter', '_id': '@humdaora:'}
+{'text': '@otariano:', 'total': 2396, 'label': 3.0, 'type': 5, 'word': 'twitter', '_id': '@otariano:'}
+{'text': '@selenagomez', 'total': 2239, 'label': 4.0, 'type': 3, 'word': 'twitter', '_id': '@selenagomez'}
+{'text': '@hiiambeatriz:', 'total': 1722, 'label': 3.0, 'type': 5, 'word': 'twitter', '_id': '@hiiambeatriz:'}
+{'text': '@provaenem2016:', 'total': 1417, 'label': 3.0, 'type': 5, 'word': 'twitter', '_id': '@provaenem2016:'}
+{'text': '@reneferracioli:', 'total': 1384, 'label': 3.0, 'type': 5, 'word': 'twitter', '_id': '@reneferracioli:'}
+{'text': '@souvodka:', 'total': 1320, 'label': 3.0, 'type': 5, 'word': 'twitter', '_id': '@souvodka:'}
+{'text': '@maconhudo:', 'total': 1080, 'label': 3.0, 'type': 5, 'word': 'twitter', '_id': '@maconhudo:'}
+{'text': '@vocenaosabiaq:', 'total': 1022, 'label': 3.0, 'type': 5, 'word': 'twitter', '_id': '@vocenaosabiaq:'}
+
+    cursor = db.vocabulary.find({'word' : 'hashtag'}).sort("total", -1).limit(10)
+
+    for document in cursor:
+        print(document)
+
+{'text': '#premiomultishow', 'total': 5574, 'label': 39.0, 'type': 4, 'word': 'hashtag', '_id': '#premiomultishow'}
+{'text': '#luanmelhorclipetvz', 'total': 3000, 'label': 39.0, 'type': 4, 'word': 'hashtag', '_id': '#luanmelhorclipetvz'}
+{'text': '#amas', 'total': 2743, 'label': 55.0, 'type': 4, 'word': 'hashtag', '_id': '#amas'}
+{'text': '#foraglobo', 'total': 1794, 'label': 52.0, 'type': 4, 'word': 'hashtag', '_id': '#foraglobo'}
+{'text': '#vejamente', 'total': 1786, 'label': 53.0, 'type': 4, 'word': 'hashtag', '_id': '#vejamente'}
+{'text': '#soucrivella10', 'total': 1776, 'label': 39.0, 'type': 4, 'word': 'hashtag', '_id': '#soucrivella10'}
+{'text': '#masterchefbr', 'total': 1717, 'label': 1.0, 'type': 4, 'word': 'hashtag', '_id': '#masterchefbr'}
+{'text': '#naosourobo', 'total': 1674, 'label': 52.0, 'type': 4, 'word': 'hashtag', '_id': '#naosourobo'}
+{'text': '#anittamelhorclipetvz', 'total': 1420, 'label': 39.0, 'type': 4, 'word': 'hashtag', '_id': '#anittamelhorclipetvz'}
+{'text': '#ariasjustinbieber', 'total': 1046, 'label': 42.0, 'type': 4, 'word': 'hashtag', '_id': '#ariasjustinbieber'}
+
+    cursor = db.vocabulary.find({'word' : 'url'}).sort("total", -1).limit(10)
+
+    for document in cursor:
+        print(document)
+
+{'text': 'https:', 'total': 1183, 'label': 2.0, 'type': 5, 'word': 'url', '_id': 'https:'}
+{'text': 'https://...', 'total': 938, 'label': 2.0, 'type': 2, 'word': 'url', '_id': 'https://...'}
+{'text': 'https://t.co/8jxpnrd8wq', 'total': 893, 'label': 2.0, 'type': 2, 'word': 'url', '_id': 'https://t.co/8jxpnrd8wq'}
+{'text': 'https://t.co/nf...', 'total': 784, 'label': 2.0, 'type': 2, 'word': 'url', '_id': 'https://t.co/nf...'}
+{'text': 'https://t.co/f71opm7wn9', 'total': 752, 'label': 2.0, 'type': 2, 'word': 'url', '_id': 'https://t.co/f71opm7wn9'}
+{'text': 'https://t.co/o6mld0zlzo', 'total': 752, 'label': 2.0, 'type': 2, 'word': 'url', '_id': 'https://t.co/o6mld0zlzo'}
+{'text': 'https://t.co/pkivca8hi2', 'total': 734, 'label': 2.0, 'type': 2, 'word': 'url', '_id': 'https://t.co/pkivca8hi2'}
+{'text': 'https://t.c...', 'total': 669, 'label': 2.0, 'type': 2, 'word': 'url', '_id': 'https://t.c...'}
+{'text': 'https://t....', 'total': 567, 'label': 2.0, 'type': 2, 'word': 'url', '_id': 'https://t....'}
+{'text': 'https', 'total': 557, 'label': 2.0, 'type': 5, 'word': 'url', '_id': 'https'}
+
+    cursor = db.vocabulary.find({'word' : 'generic'}).sort("total", -1).limit(10)
+
+    for document in cursor:
+        print(document)
+
+{'text': 'rt', 'total': 202375, 'label': 26.0, 'type': 5, 'word': 'generic', '_id': 'rt'}
+{'text': 'e', 'total': 189464, 'label': 3.0, 'type': 5, 'word': 'generic', '_id': 'e'}
+{'text': 'no', 'total': 164138, 'label': 2.0, 'type': 5, 'word': 'generic', '_id': 'no'}
+{'text': 'de', 'total': 160927, 'label': 2.0, 'type': 5, 'word': 'generic', '_id': 'de'}
+{'text': 'casa', 'total': 140661, 'label': 48.0, 'type': 5, 'word': 'generic', '_id': 'casa'}
+{'text': 'a', 'total': 127984, 'label': 3.0, 'type': 5, 'word': 'generic', '_id': 'a'}
+{'text': 'que', 'total': 106225, 'label': 2.0, 'type': 5, 'word': 'generic', '_id': 'que'}
+{'text': 'o', 'total': 96294, 'label': 3.0, 'type': 5, 'word': 'generic', '_id': 'o'}
+{'text': 'em', 'total': 90408, 'label': 2.0, 'type': 5, 'word': 'generic', '_id': 'em'}
+{'text': 'has', 'total': 86989, 'label': 2.0, 'type': 5, 'word': 'generic', '_id': 'has'}
+
+#==============================================================================
+# Conte o total de cada um dos tipos criados
+#==============================================================================
+
+import pymongo
+
+if __name__ == '__main__':
+    client = pymongo.MongoClient('localhost')
+    db = client.nosqlclass
+
+    print('twitters..: ', db.vocabulary.find({'word' : 'twitter'}).count())
+    print('hashtags..: ', db.vocabulary.find({'word' : 'hashtag'}).count())
+    print('urls......: ', db.vocabulary.find({'word' : 'url'}).count())
+    print('generics..: ', db.vocabulary.find({'word' : 'generic'}).count())
+    print('total.....: ', db.vocabulary.find().count())
+
+#==============================================================================
+# Resultados
+#==============================================================================
+
+twitters..:  89813
+hashtags..:  11109
+urls......:  80364
+generics..:  109928
+total.....:  291214

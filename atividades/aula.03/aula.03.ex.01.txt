@@ -1,0 +1,144 @@
+#==============================================================================
+# Teste Prático
+#==============================================================================
+
+[Arquivo]
+
+	var map = function() {
+		emit(this.word, 1);
+	}
+
+	var reduce = function(key, values) {
+		return Array.sum(values);
+	}
+
+[Execução]
+
+	> load("C:\\MongoDB\\aula.js")
+	true
+
+	> var mapreduce = db.vocabulary.mapReduce(map, reduce, {query: {word: "twitter"}
+	, out: "words"})
+
+	> mapreduce.find()
+	{ "_id" : "twitter", "value" : 89813 }
+
+	> var mapreduce = db.vocabulary.mapReduce(map, reduce, {out: "words"})
+
+	> mapreduce.find()
+	{ "_id" : "generic", "value" : 109928 }
+	{ "_id" : "hashtag", "value" : 11109 }
+	{ "_id" : "twitter", "value" : 89813 }
+	{ "_id" : "url", "value" : 80364 }
+
+#==============================================================================
+# Utilizando as funções de mapReduce do mongo, conte o número de
+# palavras que terminam em ar, er, ir, or, ur.
+#==============================================================================
+
+[Arquivo]
+
+	var map = function() {
+		if (this._id.length >= 2) {
+			emit(this._id.substring((this._id.length - 2), this._id.length), 1);
+		}
+	}
+
+	var reduce = function(key, values) {
+		return Array.sum(values);
+	}
+
+[Execução]
+
+	> load("C:\\MongoDB\\aula.js")
+	true
+
+	> var mapreduce = db.vocabulary.mapReduce(map, reduce, {out:"chars"})
+
+	> mapreduce.find()
+	{ "_id" : "!!", "value" : 24 }
+	{ "_id" : "#1", "value" : 1 }
+	{ "_id" : "#2", "value" : 1 }
+	{ "_id" : "#3", "value" : 1 }
+	{ "_id" : "#4", "value" : 1 }
+	{ "_id" : "#5", "value" : 1 }
+	{ "_id" : "#6", "value" : 1 }
+	{ "_id" : "#7", "value" : 1 }
+	{ "_id" : "#8", "value" : 1 }
+	{ "_id" : "#9", "value" : 1 }
+	{ "_id" : "#a", "value" : 1 }
+	{ "_id" : "#b", "value" : 1 }
+	{ "_id" : "#c", "value" : 1 }
+	{ "_id" : "#d", "value" : 1 }
+	{ "_id" : "#e", "value" : 1 }
+	{ "_id" : "#f", "value" : 1 }
+	{ "_id" : "#g", "value" : 1 }
+	{ "_id" : "#h", "value" : 1 }
+	{ "_id" : "#i", "value" : 1 }
+	{ "_id" : "#j", "value" : 1 }
+	Type "it" for more
+
+	> mapreduce.find({_id: "ar"})
+	{ "_id" : "ar", "value" : 2950 }
+
+	> mapreduce.find({_id: "er"})
+	{ "_id" : "er", "value" : 2342 }
+
+	> mapreduce.find({_id: "ir"})
+	{ "_id" : "ir", "value" : 554 }
+
+	> mapreduce.find({_id: "or"})
+	{ "_id" : "or", "value" : 1168 }
+
+	> mapreduce.find({_id: "ur"})
+	{ "_id" : "ur", "value" : 288 }
+
+#==============================================================================
+# Utilizando as funções de mapReduce do mongo, conte o total de cada
+# caracter existente no vocabulário.
+#==============================================================================
+
+[Arquivo]
+
+	var map = function() {
+		for (i = 0; i <= (this._id.length - 1); i++) {
+			emit(this._id.substring(i, (i + 1)), 1);
+		}
+	}
+
+	var reduce = function(key, values) {
+		return Array.sum(values);
+	}
+
+[Execução]
+
+	> load("C:\\MongoDB\\aula.js")
+	true
+
+	> var mapreduce = db.vocabulary.mapReduce(map, reduce, {out:"chars"})
+
+	> mapreduce.find()
+	{ "_id" : "!", "value" : 344 }
+	{ "_id" : "#", "value" : 11110 }
+	{ "_id" : "$", "value" : 220 }
+	{ "_id" : "%", "value" : 127 }
+	{ "_id" : "&", "value" : 2 }
+	{ "_id" : "(", "value" : 6 }
+	{ "_id" : ")", "value" : 8 }
+	{ "_id" : "*", "value" : 7 }
+	{ "_id" : ",", "value" : 58 }
+	{ "_id" : "-", "value" : 17 }
+	{ "_id" : ".", "value" : 83708 }
+	{ "_id" : "/", "value" : 241469 }
+	{ "_id" : "0", "value" : 21943 }
+	{ "_id" : "1", "value" : 24276 }
+	{ "_id" : "2", "value" : 20777 }
+	{ "_id" : "3", "value" : 17791 }
+	{ "_id" : "4", "value" : 16930 }
+	{ "_id" : "5", "value" : 16626 }
+	{ "_id" : "6", "value" : 16037 }
+	{ "_id" : "7", "value" : 16950 }
+	Type "it" for more
+
+	> mapreduce.find({_id: "a"})
+	{ "_id" : "a", "value" : 288288 }
